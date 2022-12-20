@@ -1,1 +1,8 @@
-fastapi[all]
+fastapi
+uvicorn
+sqlalchemy
+passlib
+bcrypt
+python-jose
+python-multipart
+psycopg2-binary

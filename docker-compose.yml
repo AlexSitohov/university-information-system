@@ -1,0 +1,33 @@
+version: '1'
+
+services:
+  app:
+    container_name: uis_app_container
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8080
+  postgres:
+    container_name: postgres_db_container
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 123
+      POSTGRES_USER: "postgres"
+      POSTGRES_DB: "app"
+
+  pgadmin4:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: postgres@postgres.com
+      PGADMIN_DEFAULT_PASSWORD: 123
+    ports:
+      - 8080:80
+
+  adminer:
+    container_name: adminer_container
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080
