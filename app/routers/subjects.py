@@ -1,8 +1,23 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from psycopg2.extras import RealDictCursor
 from sqlalchemy.orm import Session
 from .. import models
-from ..schemas import SubjectCreate, SubjectResponse
+from ..schemas import SubjectCreate, SubjectResponse, User
 from ..database import get_db
+import psycopg2
+from ..jwt import get_current_user
+
+try:
+    conn = psycopg2.connect(
+        user='postgres',
+        password=123,
+        database='uis',
+        cursor_factory=RealDictCursor
+    )
+
+    conn.autocommit = True
+except Exception as ex:
+    print(ex)
 
 router = APIRouter(tags=['subjects'])
 
@@ -27,10 +42,30 @@ def create_group(subject: SubjectCreate, db: Session = Depends(get_db)):
     return new_subject
 
 
-@router.get('/subjects', response_model=list[SubjectResponse])
+@router.get('/subjects')
 def get_subjects(db: Session = Depends(get_db)):
     subjects = db.query(models.Subject).all()
     return subjects
+
+
+@router.get('/subjects/my')
+def get_subjects_my(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    """
+    Возвращает subjects которые есть у студента
+    """
+    user = current_user.dict().get('id_student')
+    with conn.cursor() as cursor:
+        cursor.execute(
+            '''
+            select name_of_subject, subjects.id from subjects 
+            join groups_subjects on groups_subjects.subject_id = subjects.id
+            join groups on groups.id = groups_subjects.group_id
+            join students on students.group_id = groups.id
+            where students.id = %s
+            ''', (user,)
+        )
+        subjects = cursor.fetchall()
+        return subjects
 
 
 @router.delete('/subjects/{subject_id}')
