@@ -16,6 +16,16 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_DB: "app"
 
+  test_postgres:
+    container_name: test_postgres_db_container
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 123
+      POSTGRES_USER: "postgres"
+      POSTGRES_DB: "test_app"
+
+
   pgadmin4:
     container_name: pgadmin4_container
     image: dpage/pgadmin4

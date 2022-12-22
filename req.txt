@@ -7,3 +7,4 @@ python-jose
 python-multipart
 psycopg2-binary
 pytest
+httpx

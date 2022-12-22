@@ -8,7 +8,7 @@ from ..hash import hash
 router = APIRouter(tags=['users'])
 
 
-@router.post('/users')
+@router.post('/users', status_code=status.HTTP_201_CREATED)
 def registration(user: User, db: Session = Depends(get_db)):
     hashed_password = hash(user.password)
     new_user = models.User(username=user.username, password=hashed_password, student_id=user.student_id)

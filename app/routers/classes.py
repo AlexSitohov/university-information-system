@@ -8,7 +8,7 @@ router = APIRouter(tags=['classes'])
 
 
 @router.post('/classes', response_model=ClassResponse, status_code=status.HTTP_201_CREATED)
-def create_group(_class: ClassCreate, db: Session = Depends(get_db)):
+def create_class(_class: ClassCreate, db: Session = Depends(get_db)):
     new_class = models.Class(**_class.dict())
     db.add(new_class)
     db.commit()
@@ -17,13 +17,13 @@ def create_group(_class: ClassCreate, db: Session = Depends(get_db)):
 
 
 @router.get('/classes', response_model=list[ClassResponse])
-def get_groups(db: Session = Depends(get_db)):
+def get_classes(db: Session = Depends(get_db)):
     classes = db.query(models.Class).all()
     return classes
 
 
 @router.delete('/classes/{_class_id}')
-def delete_group(_class_id: int, db: Session = Depends(get_db)):
+def delete_class(_class_id: int, db: Session = Depends(get_db)):
     class_query = db.query(models.Class).filter(models.Class.id == _class_id)
     _class = class_query.first()
     if not _class:
