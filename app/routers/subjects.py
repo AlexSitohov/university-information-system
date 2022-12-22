@@ -10,8 +10,9 @@ from ..jwt import get_current_user
 try:
     conn = psycopg2.connect(
         user='postgres',
+        host='postgres',
         password=123,
-        database='uis',
+        database='app',
         cursor_factory=RealDictCursor
     )
 
@@ -23,7 +24,7 @@ router = APIRouter(tags=['subjects'])
 
 
 @router.post('/subjects', response_model=SubjectResponse, status_code=status.HTTP_201_CREATED)
-def create_group(subject: SubjectCreate, db: Session = Depends(get_db)):
+def create_subject(subject: SubjectCreate, db: Session = Depends(get_db)):
     if not subject.groups_id:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Вы не выбрали ни одной группы')
     groups = []
@@ -42,7 +43,7 @@ def create_group(subject: SubjectCreate, db: Session = Depends(get_db)):
     return new_subject
 
 
-@router.get('/subjects')
+@router.get('/subjects', response_model=list[SubjectResponse])
 def get_subjects(db: Session = Depends(get_db)):
     subjects = db.query(models.Subject).all()
     return subjects

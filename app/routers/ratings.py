@@ -9,7 +9,7 @@ router = APIRouter(tags=['ratings'])
 
 
 @router.post('/ratings', response_model=Rating, status_code=status.HTTP_201_CREATED)
-def create_group(rating: Rating, db: Session = Depends(get_db)):
+def create_rating(rating: Rating, db: Session = Depends(get_db)):
     new_rating = models.Rating(**rating.dict())
     db.add(new_rating)
     db.commit()
